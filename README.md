@@ -35,10 +35,10 @@ import (
 
 func init() {
     cs.Init(
-		"access_key_id",
-		"access_key_secret",
-		"sign_name",
-	)
+        "access_key_id",
+        "access_key_secret",
+        "sign_name",
+    )
 }
 ```
 
@@ -46,16 +46,16 @@ func init() {
 ```Go
 func sendSMS() {
     param := map[string]string{
-		"code": "123456",
-	}
+        "code": "123456",
+    }
 
-	err := cs.SendSMS(
-		"13800000000", // 指定手机号
-		param, // 短信模板变量
-		"SMS_123456789", // 短信模板ID
-	)
-	if err != nil {
-		fmt.Println("err:", err)
-	}
+    err := cs.SendSMS(
+        "13800000000", // 指定手机号
+        param, // 短信模板变量
+        "SMS_123456789", // 短信模板ID
+    )
+    if err != nil {
+        fmt.Println("err:", err)
+    }
 }
 ```

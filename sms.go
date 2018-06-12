@@ -77,34 +77,3 @@ func SendSMS(phone string, param map[string]string, templateCode string) error {
 
 	return nil
 } // SendSMS()
-
-/* func Simulate() {
-	param := &map[string]string{
-		"AccessKeyId":      "testId",
-		"Timestamp":        "2017-07-12T02:42:19Z",
-		"Format":           "XML",
-		"SignatureMethod":  "HMAC-SHA1",
-		"SignatureVersion": "1.0",
-		"SignatureNonce":   "45e25e9b-0a6f-4070-8c85-2956eda1b466",
-
-		"Action":        "SendSms",
-		"Version":       "2017-05-25",
-		"RegionId":      "cn-hangzhou",
-		"PhoneNumbers":  "15300000001",
-		"SignName":      "阿里云短信测试专用",
-		"TemplateCode":  "SMS_71390007",
-		"TemplateParam": "{\"customer\":\"test\"}",
-		"OutId":         "123",
-	}
-	sign := doSign("GET", *param, "testSecret")
-	(*param)["Signature"] = sign
-	fmt.Println("sign:", sign)
-
-	pList := make([]string, 0)
-	for key, value := range *param {
-		pList = append(pList, fmt.Sprintf("%s=%s", key, specialUrlEncode(value)))
-	}
-	queryString := strings.Join(pList, "&")
-	url := fmt.Sprintf("http://%s/?%s", DOMAIN, queryString)
-	fmt.Println("request_url:", url)
-} */

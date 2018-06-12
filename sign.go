@@ -25,7 +25,6 @@ func doSign(method string, param map[string]string, accessSecret string) string 
 	str2Sign := fmt.Sprintf("%s&%s&%s", method, specialUrlEncode("/"),
 		specialUrlEncode(sortedQueryString))
 
-	// 签名
 	// 签名采用HmacSHA1算法 + Base64，编码采用：UTF-8
 	h := hmac.New(sha1.New, []byte(fmt.Sprintf("%s&", accessSecret)))
 	h.Write([]byte(str2Sign))
