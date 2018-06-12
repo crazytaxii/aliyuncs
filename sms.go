@@ -21,10 +21,11 @@ const (
 /**
  * 向指定手机号发送短信
  */
-func SendSMS(phone string, param map[string]string, templateCode string) error {
-	templateParam, err := json.Marshal(param)
+func SendSMS(phone string, signName string, templateParam map[string]string,
+	templateCode string) (string, error) {
+	jsonTemplateParam, err := json.Marshal(templateParam)
 	if err != nil {
-		return err
+		return "", err
 	}
 
 	// 参数
@@ -40,9 +41,9 @@ func SendSMS(phone string, param map[string]string, templateCode string) error {
 		"Version":       API_VERSION,
 		"RegionId":      REGION_ID,
 		"PhoneNumbers":  phone,
-		"SignName":      config.SignName,
+		"SignName":      signName,
 		"TemplateCode":  templateCode,
-		"TemplateParam": string(templateParam),
+		"TemplateParam": string(jsonTemplateParam),
 	}
 	sign := doSign("GET", data, config.AccessSecret) // 签名
 	data["Signature"] = sign
@@ -52,12 +53,11 @@ func SendSMS(phone string, param map[string]string, templateCode string) error {
 		pList = append(pList, fmt.Sprintf("%s=%s", key, specialUrlEncode(value)))
 	}
 	queryString := strings.Join(pList, "&")
-	// url := fmt.Sprintf("http://%s/?%s", DOMAIN, queryString)
 
 	_, body, errList := gorequest.New().Get(fmt.Sprintf("http://%s/?%s", DOMAIN,
 		queryString)).End()
 	if errList != nil {
-		return errList[0]
+		return "", errList[0]
 	}
 
 	result := new(struct {
@@ -68,12 +68,39 @@ func SendSMS(phone string, param map[string]string, templateCode string) error {
 	})
 	err = json.Unmarshal([]byte(body), result)
 	if err != nil {
-		return err
+		return "", err
 	}
 	if result.Code != "OK" {
-		return fmt.Errorf("Send sms to user:%s failed, error code:%s, error message:%s",
+		return "", fmt.Errorf("Send sms to user:%s failed, error code:%s, error message:%s",
 			phone, result.Code, result.Message)
 	}
 
-	return nil
+	return result.BizId, nil
 } // SendSMS()
+
+/**
+ * 发送批量短信接口
+ */
+/* func SendBatchSMS(phoneList []string, signName []string, templateCode string,
+	templateParamList []map[string]string) (string, error) {
+	jsonPhoneList, err := json.Marshal(phoneList)
+	if err != nil {
+		return "", nil
+	}
+	jsonSignName, err := json.Marshal(signName)
+	if err != nil {
+		return "", nil
+	}
+	jsonTemplateParamList, err := json.Marshal(templateParamList)
+	if err != nil {
+		return "", nil
+	}
+
+	// 参数
+	data := map[string]string{
+		"PhoneNumberJson":   string(jsonPhoneList),
+		"SignNameJson":      string(jsonSignName),
+		"TemplateCode":      templateCode,
+		"TemplateParamJson": string(jsonTemplateParamList),
+	}
+} // SendBatchSMS() */

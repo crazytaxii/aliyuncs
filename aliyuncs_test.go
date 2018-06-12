@@ -10,14 +10,12 @@ import (
 const (
 	ACCESS_ID     = "access_key_id"
 	ACCESS_SECRET = "access_key_secret"
-	SIGN_NAME     = "sign_name"
 )
 
 func TestInit(t *testing.T) {
 	cs.Init(
 		ACCESS_ID,
 		ACCESS_SECRET,
-		SIGN_NAME,
 	)
 }
 
@@ -26,8 +24,9 @@ func TestSendSMS(t *testing.T) {
 		"code": "123456",
 	}
 
-	err := cs.SendSMS(
+	_, err := cs.SendSMS(
 		"13800000000",
+		"sign_name",
 		param,
 		"SMS_123456789",
 	)
