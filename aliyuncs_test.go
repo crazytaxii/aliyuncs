@@ -12,19 +12,13 @@ const (
 	ACCESS_SECRET = "access_key_secret"
 )
 
-func TestInit(t *testing.T) {
-	cs.Init(
-		ACCESS_ID,
-		ACCESS_SECRET,
-	)
-}
-
 func TestSendSMS(t *testing.T) {
 	param := map[string]string{
 		"code": "123456",
 	}
 
-	_, err := cs.SendSMS(
+	client := cs.NewClient(ACCESS_ID, ACCESS_SECRET)
+	_, err := client.SendSMS(
 		"13800000000",
 		"sign_name",
 		param,

@@ -4,17 +4,14 @@ import ()
 
 const DOMAIN = "dysmsapi.aliyuncs.com"
 
-type AliyunCsConfig struct {
+type Client struct {
 	AccessKeyId  string
 	AccessSecret string
 }
 
-var config = new(AliyunCsConfig)
-
-/**
- * 阿里云通讯初始化
- */
-func Init(accessKeyId string, accessSecret string) {
-	config.AccessKeyId = accessKeyId
-	config.AccessSecret = accessSecret
-} // Init()
+func NewClient(accessKeyId string, accessSecret string) *Client {
+	return &Client{
+		AccessKeyId:  accessKeyId,
+		AccessSecret: accessSecret,
+	}
+} // NewClient()

@@ -21,7 +21,7 @@ const (
 /**
  * 向指定手机号发送短信
  */
-func SendSMS(phone string, signName string, templateParam map[string]string,
+func (client *Client) SendSMS(phone string, signName string, templateParam map[string]string,
 	templateCode string) (string, error) {
 	jsonTemplateParam, err := json.Marshal(templateParam)
 	if err != nil {
@@ -30,7 +30,7 @@ func SendSMS(phone string, signName string, templateParam map[string]string,
 
 	// 参数
 	data := map[string]string{
-		"AccessKeyId":      config.AccessKeyId,
+		"AccessKeyId":      client.AccessKeyId,
 		"Timestamp":        time.Now().UTC().Format("2006-01-02T15:04:05Z"),
 		"Format":           FORMAT,
 		"SignatureMethod":  SIGNATURE_METHOD,
@@ -45,7 +45,7 @@ func SendSMS(phone string, signName string, templateParam map[string]string,
 		"TemplateCode":  templateCode,
 		"TemplateParam": string(jsonTemplateParam),
 	}
-	sign := doSign("GET", data, config.AccessSecret) // 签名
+	sign := doSign("GET", data, client.AccessSecret) // 签名
 	data["Signature"] = sign
 
 	pList := make([]string, 0)
@@ -71,7 +71,7 @@ func SendSMS(phone string, signName string, templateParam map[string]string,
 		return "", err
 	}
 	if result.Code != "OK" {
-		return "", fmt.Errorf("Send sms to user:%s failed, error code:%s, error message:%s",
+		return "", fmt.Errorf("Send sms to user: %s failed, err_code: %s, err_msg: %s",
 			phone, result.Code, result.Message)
 	}
 

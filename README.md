@@ -1,5 +1,5 @@
 # aliyuncs
-阿里云通讯Golang SDK
+阿里云通讯（原阿里大于）Golang SDK
 
 ## 准备
 ### 创建阿里云账号
@@ -24,29 +24,15 @@
 $ go get github.com/crazytaxii/aliyuncs
 ```
 
-## 使用实例
-### 初始化
-```Go
-import (
-    cs "github.com/crazytaxii/aliyuncs"
-)
-
-func init() {
-    cs.Init(
-        "access_key_id",
-        "access_key_secret",
-    )
-}
-```
-
-### 向指定手机号（用户）发送短信
+## 使用示例
 ```Go
 func sendSMS() {
     param := map[string]string{
         "code": "123456",
     }
 
-    _, err := cs.SendSMS(
+    client := cs.NewClient(ACCESS_ID, ACCESS_SECRET)
+    _, err := client.SendSMS(
         "13800000000", // 指定手机号
         "sign_name", // 短信签名
         param, // 短信模板变量
