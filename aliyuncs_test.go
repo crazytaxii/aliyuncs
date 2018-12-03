@@ -17,14 +17,15 @@ func TestSendSMS(t *testing.T) {
 		"code": "123456",
 	}
 
-	client := cs.NewClient(ACCESS_ID, ACCESS_SECRET)
-	_, err := client.SendSMS(
+	cs.NewClient(ACCESS_ID, ACCESS_SECRET)
+	bizId, err := cs.GetClient().SendSMS(
 		"13800000000",
 		"sign_name",
-		param,
 		"SMS_123456789",
+		param,
 	)
 	if err != nil {
 		fmt.Println("err:", err)
 	}
+	fmt.Printf("biz_id: %s\n", bizId)
 }

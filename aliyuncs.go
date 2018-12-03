@@ -1,7 +1,5 @@
 package aliyuncs
 
-import ()
-
 const DOMAIN = "dysmsapi.aliyuncs.com"
 
 type Client struct {
@@ -9,9 +7,15 @@ type Client struct {
 	AccessSecret string
 }
 
-func NewClient(accessKeyId string, accessSecret string) *Client {
-	return &Client{
+var client *Client
+
+func NewClient(accessKeyId string, accessSecret string) {
+	client = &Client{
 		AccessKeyId:  accessKeyId,
 		AccessSecret: accessSecret,
 	}
 } // NewClient()
+
+func GetClient() *Client {
+	return client
+} // GetClient()
