@@ -1,7 +1,5 @@
 package aliyuncs
 
-const DOMAIN = "dysmsapi.aliyuncs.com"
-
 type Client struct {
 	AccessKeyId  string
 	AccessSecret string
