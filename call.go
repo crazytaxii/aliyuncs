@@ -8,14 +8,14 @@ import (
 	"github.com/parnurzeal/gorequest"
 )
 
-func (client *Client) CallByTts(phone string, show string, ttsCode string, ttsParam map[string]string) (string, error) {
+func (c *Client) CallByTTS(phone string, show string, ttsCode string, ttsParam map[string]string) (string, error) {
 	jsonTtsParam, err := json.Marshal(ttsParam)
 	if err != nil {
 		return "", err
 	}
 
 	data := map[string]string{
-		"AccessKeyId":      client.AccessKeyId,
+		"AccessKeyId":      c.AccessKeyId,
 		"Timestamp":        time.Now().UTC().Format("2006-01-02T15:04:05Z"),
 		"Format":           FORMAT,
 		"SignatureMethod":  SIGNATURE_METHOD,
@@ -30,7 +30,7 @@ func (client *Client) CallByTts(phone string, show string, ttsCode string, ttsPa
 		"TtsCode":          ttsCode,
 		"TtsParam":         string(jsonTtsParam),
 	}
-	data["Signature"] = doSign("GET", data, client.AccessSecret) // 签名
+	data["Signature"] = c.doSign("GET", data) // 签名
 
 	pList := make([]string, 0)
 	for key, value := range data {
@@ -45,8 +45,7 @@ func (client *Client) CallByTts(phone string, show string, ttsCode string, ttsPa
 	if errList != nil {
 		return "", errList[0]
 	}
-	fmt.Println("resp_body:", body)
-	resp := new(SingleCallByTtsResponse)
+	resp := &SingleCallByTTSResponse{}
 	err = json.Unmarshal([]byte(body), resp)
 	if err != nil {
 		return "", err

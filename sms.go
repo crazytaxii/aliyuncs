@@ -11,7 +11,7 @@ import (
 /**
  * 向指定手机号发送短信
  */
-func (client *Client) SendSMS(phone string, signName string, templateCode string, templateParam map[string]string) (string, error) {
+func (c *Client) SendSMS(phone, signName, templateCode string, templateParam map[string]string) (string, error) {
 	jsonTemplateParam, err := json.Marshal(templateParam)
 	if err != nil {
 		return "", err
@@ -19,7 +19,7 @@ func (client *Client) SendSMS(phone string, signName string, templateCode string
 
 	// 参数
 	data := map[string]string{
-		"AccessKeyId":      client.AccessKeyId,
+		"AccessKeyId":      c.AccessKeyId,
 		"Timestamp":        time.Now().UTC().Format("2006-01-02T15:04:05Z"),
 		"Format":           FORMAT,
 		"SignatureMethod":  SIGNATURE_METHOD,
@@ -34,7 +34,7 @@ func (client *Client) SendSMS(phone string, signName string, templateCode string
 		"TemplateCode":  templateCode,
 		"TemplateParam": string(jsonTemplateParam),
 	}
-	data["Signature"] = doSign("GET", data, client.AccessSecret) // 签名
+	data["Signature"] = c.doSign("GET", data) // 签名
 
 	pList := make([]string, 0)
 	for key, value := range data {
@@ -50,7 +50,7 @@ func (client *Client) SendSMS(phone string, signName string, templateCode string
 		return "", errList[0]
 	}
 
-	resp := new(SendSmsResponse)
+	resp := &SendSMSResponse{}
 	err = json.Unmarshal([]byte(body), resp)
 	if err != nil {
 		return "", err
