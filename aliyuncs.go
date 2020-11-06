@@ -7,11 +7,12 @@ type Client struct {
 
 var client *Client
 
-func NewClient(accessKeyId string, accessSecret string) {
+func NewClient(accessKeyId string, accessSecret string) *Client {
 	client = &Client{
 		AccessKeyId:  accessKeyId,
 		AccessSecret: accessSecret,
 	}
+	return client
 } // NewClient()
 
 func GetClient() *Client {
