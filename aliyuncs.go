@@ -1,20 +1,22 @@
 package aliyuncs
 
+import (
+	"net/http"
+	"time"
+)
+
 type Client struct {
-	AccessKeyId  string
-	AccessSecret string
+	accessKeyID  string
+	accessSecret string
+	*http.Client
 }
 
-var client *Client
-
-func NewClient(accessKeyId string, accessSecret string) *Client {
-	client = &Client{
-		AccessKeyId:  accessKeyId,
-		AccessSecret: accessSecret,
+func NewClient(keyID, secret string, timeout time.Duration) *Client {
+	return &Client{
+		accessKeyID:  keyID,
+		accessSecret: secret,
+		Client: &http.Client{
+			Timeout: timeout,
+		},
 	}
-	return client
-} // NewClient()
-
-func GetClient() *Client {
-	return client
-} // GetClient()
+}

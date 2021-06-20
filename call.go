@@ -1,58 +1,50 @@
 package aliyuncs
 
-import (
-	"encoding/json"
-	"fmt"
-	"time"
+type callContext struct {
+	phone   string
+	showAs  string
+	ttsCode string
+	CSTemplate
+}
 
-	"github.com/parnurzeal/gorequest"
-)
+func (c callContext) getPhone() string {
+	return c.phone
+}
 
-func (c *Client) CallByTTS(phone string, show string, ttsCode string, ttsParam map[string]string) (string, error) {
-	jsonTtsParam, err := json.Marshal(ttsParam)
+func (c callContext) genReqParams() (map[string]string, error) {
+	str, err := c.CSTemplate.Marshal()
+	if err != nil {
+		return nil, err
+	}
+	return map[string]string{
+		"CalledNumber":     c.phone,
+		"CalledShowNumber": c.showAs,
+		"TtsCode":          c.ttsCode,
+		"TtsParam":         str,
+	}, nil
+}
+
+type SingleCallByTTSResponse struct {
+	commonResponse
+	CallID string `json:"CallId"`
+}
+
+func (c *Client) CallByTTS(phone, showAs, ttsCode string, template CSTemplate) (string, error) {
+	ctx := callContext{
+		phone:      phone,
+		showAs:     showAs,
+		ttsCode:    ttsCode,
+		CSTemplate: template,
+	}
+
+	p, err := c.genReqParams(ctx, ActionCall)
 	if err != nil {
 		return "", err
 	}
 
-	data := map[string]string{
-		"AccessKeyId":      c.AccessKeyId,
-		"Timestamp":        time.Now().UTC().Format("2006-01-02T15:04:05Z"),
-		"Format":           FORMAT,
-		"SignatureMethod":  SIGNATURE_METHOD,
-		"SignatureVersion": SIGNARURE_VERSION,
-		"SignatureNonce":   randStr(32),
-
-		"Action":           CALL_API_ACTION,
-		"Version":          API_VERSION,
-		"RegionId":         REGION_ID,
-		"CalledNumber":     phone,
-		"CalledShowNumber": show,
-		"TtsCode":          ttsCode,
-		"TtsParam":         string(jsonTtsParam),
-	}
-	data["Signature"] = c.doSign("GET", data) // 签名
-
-	pList := make([]string, 0)
-	for key, value := range data {
-		pList = append(pList, fmt.Sprintf("%s=%s", key, specialUrlEncode(value)))
-	}
-
-	req := gorequest.New().Get("http://dyvmsapi.aliyuncs.com")
-	for _, param := range pList {
-		req.Query(param)
-	}
-	_, body, errList := req.End()
-	if errList != nil {
-		return "", errList[0]
-	}
 	resp := &SingleCallByTTSResponse{}
-	err = json.Unmarshal([]byte(body), resp)
-	if err != nil {
+	if err := c.doGet(ctx, p, resp); err != nil {
 		return "", err
 	}
-	if resp.Code != "OK" {
-		return "", fmt.Errorf("Call by tts to user: %s failed, err_code: %s, err_msg: %s", phone, resp.Code, resp.Message)
-	}
-
-	return resp.CallId, nil
-} // CallByTts()
+	return resp.CallID, nil
+}

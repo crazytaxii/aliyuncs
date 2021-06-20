@@ -26,7 +26,7 @@ func (c *Client) doSign(method string, param map[string]string) string {
 		specialUrlEncode(sortedQueryString))
 
 	// 签名采用HmacSHA1算法 + Base64，编码采用：UTF-8
-	h := hmac.New(sha1.New, []byte(fmt.Sprintf("%s&", c.AccessSecret)))
+	h := hmac.New(sha1.New, []byte(fmt.Sprintf("%s&", c.accessSecret)))
 	h.Write([]byte(str2Sign))
 	hashed := h.Sum(nil)
 	return base64.StdEncoding.EncodeToString(hashed)

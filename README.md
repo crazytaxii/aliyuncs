@@ -27,21 +27,25 @@
 
 ## 使用
 
-```Go
-func sendSMS() {
-    param := map[string]string{
+```go
+import (
+    cs "github.com/crazytaxii/aliyuncs"
+)
+
+
+func main() {
+    tmpl := cs.CSTemplate{
         "code": "123456",
     }
 
-    client := cs.NewClient(ACCESS_ID, ACCESS_SECRET)
-    _, err := client.SendSMS(
-        "13800000000", // 指定手机号
+    client := cs.NewClient("access_id", "access_secret", 10 * time.Second)
+    if _, err := client.SendSMS(
+        "13712341234", // 指定手机号
         "sign_name", // 短信签名
-        param, // 短信模板变量
         "SMS_123456789", // 短信模板ID
-    )
-    if err != nil {
-        fmt.Println("err:", err)
+        tmpl, // 短信模板变量
+    ); err != nil {
+        log.Fatal("err:", err)
     }
 }
 ```
